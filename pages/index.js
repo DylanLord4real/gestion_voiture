@@ -1,19 +1,28 @@
+
+"use client";
 import { getCars } from "../lib/airtable";
 import Link from "next/link";
 import { useState } from "react";
+import CarCarousel from "../components/CarCarousel";
+import SearchFilters from "../components/SearchFilters";
 
 export default function Home({ cars }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [priceFilter, setPriceFilter] = useState("all");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const filteredCars = cars.filter(car => {
     const matchesSearch = car.Nom.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPrice = priceFilter === "all" || 
-      (priceFilter === "low" && car.Prix < 20000) ||
-      (priceFilter === "mid" && car.Prix >= 20000 && car.Prix < 30000) ||
-      (priceFilter === "high" && car.Prix >= 30000);
+    const matchesPrice = !maxPrice || car.Prix <= parseInt(maxPrice);
     return matchesSearch && matchesPrice;
   });
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+  };
+
+  const handlePriceFilterChange = (price) => {
+    setMaxPrice(price);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
@@ -93,37 +102,10 @@ export default function Home({ cars }) {
             </div>
             
             {/* Right Content - Search */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Trouvez votre véhicule</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
-                  <input
-                    type="text"
-                    placeholder="Marque, modèle..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
-                  <select
-                    value={priceFilter}
-                    onChange={(e) => setPriceFilter(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  >
-                    <option value="all">Tous les prix</option>
-                    <option value="low">Moins de 20 000€</option>
-                    <option value="mid">20 000€ - 30 000€</option>
-                    <option value="high">Plus de 30 000€</option>
-                  </select>
-                </div>
-                <button className="w-full bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 rounded-lg font-semibold hover:from-red-700 hover:to-orange-700 transition-all transform hover:scale-105">
-                  Rechercher
-                </button>
-              </div>
-            </div>
+            <SearchFilters 
+              onSearchChange={handleSearchChange}
+              onPriceFilterChange={handlePriceFilterChange}
+            />
           </div>
         </div>
       </section>
@@ -137,70 +119,9 @@ export default function Home({ cars }) {
             <p className="text-gray-600 text-lg">{filteredCars.length} véhicule{filteredCars.length > 1 ? 's' : ''} disponible{filteredCars.length > 1 ? 's' : ''}</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCars.map((car) => (
-              <div key={car.id} className="group relative">
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:transform hover:scale-105 border border-gray-100">
-                  {car.Photos && car.Photos.length > 0 && (
-                    <div className="relative overflow-hidden">
-                      <img 
-                        src={car.Photos[0].url} 
-                        alt={car.Nom} 
-                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                      <div className="absolute top-4 right-4">
-                        <span className="bg-gradient-to-r from-red-600 to-orange-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-                          Disponible
-                        </span>
-                      </div>
-                      <div className="absolute bottom-4 left-4">
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <svg key={i} className="w-4 h-4 text-yellow-400 fill-current drop-shadow-sm" viewBox="0 0 20 20">
-                              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                            </svg>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-3">{car.Nom}</h3>
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <span className="text-3xl font-bold text-red-600">
-                          {car.Prix?.toLocaleString()}
-                        </span>
-                        <span className="text-lg text-gray-600 ml-1">€</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-gray-500">Prix négociable</div>
-                      </div>
-                    </div>
-                    <Link 
-                      href={`/voiture/${car.id}`} 
-                      className="block w-full bg-gradient-to-r from-red-600 to-orange-600 text-white text-center py-3 rounded-xl font-semibold hover:from-red-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                    >
-                      Voir les détails
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="px-4">
+            <CarCarousel cars={filteredCars} />
           </div>
-
-          {filteredCars.length === 0 && (
-            <div className="text-center py-20">
-              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.08-2.33" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Aucun véhicule trouvé</h3>
-              <p className="text-gray-600">Essayez de modifier vos critères de recherche</p>
-            </div>
-          )}
         </div>
       </section>
 

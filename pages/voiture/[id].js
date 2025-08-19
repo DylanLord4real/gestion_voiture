@@ -1,3 +1,4 @@
+"use client";
 import { getCars } from "../../lib/airtable";
 import Link from "next/link";
 import { useState } from "react";
