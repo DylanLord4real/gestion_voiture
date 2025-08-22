@@ -1,25 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CarCard from './CarCard';
 
 export default function CarCarousel({ cars }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsPerPage = 3; // Nombre de cartes visibles à la fois
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  
+  // Ajuster le nombre d'éléments par page selon la taille d'écran
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1); // Mobile: 1 carte
+        // Reset l'index si nécessaire pour éviter les problèmes d'affichage
+        setCurrentIndex(prev => Math.min(prev, cars.length - 1));
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2); // Tablet: 2 cartes
+      } else {
+        setItemsPerPage(3); // Desktop: 3 cartes
+      }
+    };
+
+    updateItemsPerPage();
+    window.addEventListener('resize', updateItemsPerPage);
+    return () => window.removeEventListener('resize', updateItemsPerPage);
+  }, [cars.length]);
+
   const totalPages = Math.ceil(cars.length / itemsPerPage);
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex + itemsPerPage >= cars.length ? 0 : prevIndex + itemsPerPage
-    );
+    setCurrentIndex((prevIndex) => {
+      if (window.innerWidth < 768) {
+        // Mobile: avancer d'une carte à la fois
+        return prevIndex + 1 >= cars.length ? 0 : prevIndex + 1;
+      } else {
+        // Desktop/Tablet: avancer par groupe
+        return prevIndex + itemsPerPage >= cars.length ? 0 : prevIndex + itemsPerPage;
+      }
+    });
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex - itemsPerPage < 0 ? Math.max(0, cars.length - itemsPerPage) : prevIndex - itemsPerPage
-    );
+    setCurrentIndex((prevIndex) => {
+      if (window.innerWidth < 768) {
+        // Mobile: reculer d'une carte à la fois
+        return prevIndex - 1 < 0 ? cars.length - 1 : prevIndex - 1;
+      } else {
+        // Desktop/Tablet: reculer par groupe
+        return prevIndex - itemsPerPage < 0 ? Math.max(0, cars.length - itemsPerPage) : prevIndex - itemsPerPage;
+      }
+    });
   };
 
   const goToSlide = (pageIndex) => {
-    setCurrentIndex(pageIndex * itemsPerPage);
+    if (window.innerWidth < 768) {
+      // Mobile: aller directement à l'index de la carte
+      setCurrentIndex(pageIndex);
+    } else {
+      // Desktop/Tablet: aller à la page (groupe de cartes)
+      setCurrentIndex(pageIndex * itemsPerPage);
+    }
   };
 
   const visibleCars = cars.slice(currentIndex, currentIndex + itemsPerPage);
@@ -44,12 +82,18 @@ export default function CarCarousel({ cars }) {
       <div className="relative overflow-hidden">
         <div 
           className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${(currentIndex / cars.length) * 100}%)` }}
+          style={{ 
+            transform: itemsPerPage === 1 
+              ? `translateX(-${currentIndex * 100}%)` 
+              : `translateX(-${(currentIndex / cars.length) * 100}%)`
+          }}
         >
           {cars.map((car, index) => (
             <div 
               key={car.id} 
-              className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-4"
+              className={`flex-shrink-0 px-4 ${
+                itemsPerPage === 1 ? 'w-full' : 'w-full md:w-1/2 lg:w-1/3'
+              }`}
             >
               <CarCard car={car} />
             </div>
@@ -83,30 +127,49 @@ export default function CarCarousel({ cars }) {
       )}
 
       {/* Dots Indicator */}
-      {cars.length > itemsPerPage && (
+      {cars.length > 1 && (
         <div className="flex justify-center mt-8 space-x-2">
-          {Array.from({ length: totalPages }).map((_, pageIndex) => (
-            <button
-              key={pageIndex}
-              onClick={() => goToSlide(pageIndex)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                Math.floor(currentIndex / itemsPerPage) === pageIndex
-                  ? 'bg-gradient-to-r from-red-600 to-orange-600 scale-125'
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Aller à la page ${pageIndex + 1}`}
-            />
-          ))}
+          {itemsPerPage === 1 ? (
+            // Mobile: un dot par carte
+            cars.map((_, cardIndex) => (
+              <button
+                key={cardIndex}
+                onClick={() => goToSlide(cardIndex)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  currentIndex === cardIndex
+                    ? 'bg-gradient-to-r from-red-600 to-orange-600 scale-125'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Aller à la carte ${cardIndex + 1}`}
+              />
+            ))
+          ) : (
+            // Desktop/Tablet: un dot par page
+            Array.from({ length: totalPages }).map((_, pageIndex) => (
+              <button
+                key={pageIndex}
+                onClick={() => goToSlide(pageIndex)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  Math.floor(currentIndex / itemsPerPage) === pageIndex
+                    ? 'bg-gradient-to-r from-red-600 to-orange-600 scale-125'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Aller à la page ${pageIndex + 1}`}
+              />
+            ))
+          )}
         </div>
       )}
 
       {/* Progress Bar */}
-      {cars.length > itemsPerPage && (
+      {cars.length > 1 && (
         <div className="mt-4 bg-gray-200 rounded-full h-1 overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-red-600 to-orange-600 transition-all duration-500 ease-out"
             style={{ 
-              width: `${((currentIndex + itemsPerPage) / cars.length) * 100}%` 
+              width: itemsPerPage === 1 
+                ? `${((currentIndex + 1) / cars.length) * 100}%`
+                : `${((currentIndex + itemsPerPage) / cars.length) * 100}%` 
             }}
           />
         </div>
@@ -114,7 +177,11 @@ export default function CarCarousel({ cars }) {
 
       {/* Counter */}
       <div className="text-center mt-4 text-gray-600 text-sm">
-        {cars.length > itemsPerPage ? (
+        {itemsPerPage === 1 ? (
+          <span>
+            {currentIndex + 1} sur {cars.length} véhicules
+          </span>
+        ) : cars.length > itemsPerPage ? (
           <span>
             {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, cars.length)} sur {cars.length} véhicules
           </span>
