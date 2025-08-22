@@ -75,6 +75,11 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        env:
+          NEXT_PUBLIC_AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          NEXT_PUBLIC_AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          NEXT_PUBLIC_WHATSAPP_NUMBER: ${{ secrets.WHATSAPP_NUMBER }}
+          NEXT_PUBLIC_AIRTABLE_TABLE: ${{ secrets.AIRTABLE_TABLE }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

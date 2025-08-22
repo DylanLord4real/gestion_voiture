@@ -315,7 +315,7 @@ export default function CarDetails({ car }) {
 export async function getStaticPaths() {
   const cars = await getCars();
   const paths = cars.map((car) => ({ params: { id: car.id } }));
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: false };
 }
 
 export async function getStaticProps({ params }) {
