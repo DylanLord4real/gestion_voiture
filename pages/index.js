@@ -217,7 +217,7 @@ export default function Home({ cars }) {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Horaires</h3>
-                  <p className="text-orange-100">Lun - Sam: 8h00 - 18h00</p>
+                  <p className="text-orange-100">Lun - Sam: 8h00 - 20h00</p>
                   <p className="text-orange-100">Dimanche: Sur rendez-vous</p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function Home({ cars }) {
               </div>
               
               <a
-                href="https://wa.me/22507891338977?text=Bonjour, je suis intéressé par vos véhicules d'occasion. Pouvez-vous me donner plus d'informations ?"
+                href="https://wa.me/2250789133897?text=Bonjour, je suis intéressé par vos véhicules d'occasion. Pouvez-vous me donner plus d'informations ?"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-green-500 text-white px-6 py-4 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-3 font-semibold transform hover:scale-105"
