@@ -177,7 +177,7 @@ export default function CarDetails({ car }) {
             <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Prix</h2>
               <div className="text-4xl font-bold text-red-600">
-                {car.Prix?.toLocaleString()} FCFA
+                {car.Prix?.toLocaleString()} XOF
               </div>
               <p className="text-gray-600 mt-2">Prix négociable • Financement disponible</p>
             </div>
