@@ -315,7 +315,7 @@ export default function CarDetails({ car }) {
 export async function getStaticPaths() {
   const cars = await getCars();
   const paths = cars.map((car) => ({ params: { id: car.id } }));
-  return { paths, fallback: false };
+  return { paths, fallback: 'blocking' };
 }
 
 export async function getStaticProps({ params }) {
@@ -327,6 +327,7 @@ export async function getStaticProps({ params }) {
   }
   
   return { 
-    props: { car }
+    props: { car },
+    revalidate: 300 // Revalidate every 5 minutes
   };
 }
