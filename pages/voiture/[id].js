@@ -327,7 +327,6 @@ export async function getStaticProps({ params }) {
   }
   
   return { 
-    props: { car }, 
-    revalidate: 60 
+    props: { car }
   };
 }

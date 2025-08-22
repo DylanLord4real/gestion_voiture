@@ -322,7 +322,6 @@ export default function Home({ cars }) {
 export async function getStaticProps() {
   const cars = await getCars();
   return { 
-    props: { cars }, 
-    revalidate: 60 // Revalidate every minute
+    props: { cars }
   };
 }
