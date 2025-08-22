@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import CarCarousel from "../components/CarCarousel";
 import SearchFilters from "../components/SearchFilters";
+import Image from "next/image";
 
 export default function Home({ cars }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,9 +34,12 @@ export default function Home({ cars }) {
             <div className="flex items-center space-x-3">
               {/* Logo RAHICO */}
               <div className="relative">
-                <img 
-                  src="./../docs/icon.png" 
-                  alt="RAHICO PARC AUTO" 
+
+                <Image
+                  src="/images/icon.png"
+                  alt="RAHICO PARC AUTO"
+                  width={48}
+                  height={48}
                   className="w-12 h-12 object-contain"
                 />
               </div>
@@ -230,9 +234,12 @@ export default function Home({ cars }) {
               <div className="bg-white rounded-2xl p-6 mb-6 flex items-center justify-center">
                 <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
                   <div className="text-center">
-                    <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zM3 21l1.5-4.5h11L19 21H5z"/>
-                    </svg>
+                    <Image
+                      src="/images/frame.png"
+                      width={48}
+                      height={48}
+                      className="w-full h-full fit-content text-gray-400 mx-auto mb-2"
+                    />
                     <p className="text-gray-600 text-sm">QR Code WhatsApp</p>
                     <p className="text-gray-500 text-xs">+225 07 89 13 38 97</p>
                   </div>
@@ -262,9 +269,11 @@ export default function Home({ cars }) {
             {/* Logo et Description */}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <img 
-                  src="/docs/icon.png" 
-                  alt="RAHICO PARC AUTO" 
+              <Image
+                  src="/images/icon.png"
+                  alt="RAHICO PARC AUTO"
+                  width={48}
+                  height={48}
                   className="w-12 h-12 object-contain"
                 />
                 <div className="text-white">

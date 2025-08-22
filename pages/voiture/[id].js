@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { getCars } from "../../lib/airtable";
 import Link from "next/link";
 import { useState } from "react";
@@ -84,11 +85,13 @@ export default function CarDetails({ car }) {
               </Link>
             </div>
             <div className="flex items-center space-x-3">
-              <img 
-                src="/docs/icon.png" 
-                alt="RAHICO PARC AUTO" 
-                className="w-12 h-12 object-contain"
-              />
+              <Image
+                                src="/images/icon.png"
+                                alt="RAHICO PARC AUTO"
+                                width={48}
+                                height={48}
+                                className="w-12 h-12 object-contain"
+                              />
               <div className="text-white">
                 <div className="text-xl font-bold tracking-wider">RAHICO</div>
                 <div className="text-xs font-medium opacity-90 -mt-1">PARC AUTO</div>
