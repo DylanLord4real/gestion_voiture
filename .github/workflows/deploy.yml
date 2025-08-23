@@ -38,6 +38,11 @@ jobs:
         NEXT_PUBLIC_AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
         NEXT_PUBLIC_WHATSAPP_NUMBER: ${{ secrets.WHATSAPP_NUMBER }}
         NEXT_PUBLIC_AIRTABLE_TABLE: ${{ secrets.AIRTABLE_TABLE }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_REPO: ${{ secrets.GH_REPO }}
+        GH_BRANCH: ${{ secrets.GH_BRANCH }}
+        GH_PATH: ${{ secrets.GH_PATH }}
+
         
 
     - name: Setup Pages

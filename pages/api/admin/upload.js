@@ -18,8 +18,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Méthode non autorisée' });
   }
   // Required GitHub env vars
-  if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPO) {
-    return res.status(500).json({ message: 'Configuration GitHub manquante (GITHUB_TOKEN, GITHUB_REPO)' });
+  if (!process.env.GH_TOKEN || !process.env.GH_REPO) {
+    return res.status(500).json({ message: 'Configuration GitHub manquante (GH_TOKEN, GH_REPO)' });
   }
 
   const form = new IncomingForm({ multiples: true, keepExtensions: true });
@@ -31,9 +31,9 @@ export default async function handler(req, res) {
     try {
       const allFiles = Object.values(files).flatMap((f) => (Array.isArray(f) ? f : [f]));
 
-      const branch = process.env.GITHUB_BRANCH || 'main';
-      const basePath = (process.env.GITHUB_PATH || 'uploads').replace(/^\/+|\/+$/g, '');
-      const repo = process.env.GITHUB_REPO; // format: owner/repo
+      const branch = process.env.GH_BRANCH || 'main';
+      const basePath = (process.env.GH_PATH || 'uploads').replace(/^\/+|\/+$/g, '');
+      const repo = process.env.GH_REPO; // format: owner/repo
 
       const sanitize = (name) => {
         return name
@@ -54,16 +54,23 @@ export default async function handler(req, res) {
           const filename = `${unique}-${sanitize(original.replace(/\.[^.]+$/, ''))}${ext}`;
           const relPath = basePath ? `${basePath}/${filename}` : filename;
 
-          const apiUrl = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(relPath)}`;
+          // Per GitHub API, the path segments should remain as URL path, not URL-encoded as a whole
+          const apiUrl = `https://api.github.com/repos/${repo}/contents/${relPath}`;
           const body = {
             message: `Upload ${filename}`,
             content: b64,
             branch,
           };
+          if (process.env.GH_COMMITTER_NAME && process.env.GH_COMMITTER_EMAIL) {
+            body.committer = {
+              name: process.env.GH_COMMITTER_NAME,
+              email: process.env.GH_COMMITTER_EMAIL,
+            };
+          }
           const resp = await fetch(apiUrl, {
             method: 'PUT',
             headers: {
-              Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+              Authorization: `Bearer ${process.env.GH_TOKEN}`,
               Accept: 'application/vnd.github+json',
               'Content-Type': 'application/json',
               'X-GitHub-Api-Version': '2022-11-28',
