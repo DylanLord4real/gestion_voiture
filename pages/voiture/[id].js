@@ -3,6 +3,8 @@ import Image from "next/image";
 import { getCars } from "../../lib/airtable";
 import Link from "next/link";
 import { useState } from "react";
+import SEOHead from "../../components/SEOHead";
+import { CarStructuredData } from "../../components/StructuredData";
 
 export default function CarDetails({ car }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -70,8 +72,22 @@ export default function CarDetails({ car }) {
   const whatsappMessage = `Bonjour, je suis intéressé par la ${car.Nom} au prix de ${car.Prix?.toLocaleString()} FCFA. Pouvez-vous me donner plus d'informations ?`;
   const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
 
+  const seoTitle = `${car.Nom} - ${car.Prix?.toLocaleString()} XOF | RAHICO PARC AUTO`;
+  const seoDescription = `Découvrez cette ${car.Nom} disponible chez RAHICO PARC AUTO à ${car.Prix?.toLocaleString()} XOF. ${car.Description || 'Véhicule d\'occasion de qualité avec garantie.'} Contactez-nous au +225 07 89 13 38 97.`;
+  const carImage = car.Images && car.Images.length > 0 ? car.Images[0].url : '/images/icon.png';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
+    <>
+      <SEOHead 
+        title={seoTitle}
+        description={seoDescription}
+        image={carImage}
+        url={`/voiture/${car.id}`}
+        type="product"
+        keywords={`${car.Nom}, voiture occasion Abidjan, ${car.Marque || ''} occasion, RAHICO PARC AUTO, véhicule d'occasion Côte d'Ivoire`}
+      />
+      <CarStructuredData car={car} />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
       {/* Navigation */}
       <nav className="bg-gradient-to-r from-red-600 to-orange-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -311,7 +327,8 @@ export default function CarDetails({ car }) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

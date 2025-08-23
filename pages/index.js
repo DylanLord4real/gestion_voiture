@@ -6,6 +6,8 @@ import { useState } from "react";
 import CarCarousel from "../components/CarCarousel";
 import SearchFilters from "../components/SearchFilters";
 import Image from "next/image";
+import SEOHead from "../components/SEOHead";
+import { BusinessStructuredData } from "../components/StructuredData";
 
 export default function Home({ cars }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,7 +28,10 @@ export default function Home({ cars }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
+    <>
+      <SEOHead />
+      <BusinessStructuredData />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
       {/* Navigation */}
       <nav className="bg-gradient-to-r from-red-600 to-orange-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -324,7 +329,8 @@ export default function Home({ cars }) {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </>
   );
 }
 
