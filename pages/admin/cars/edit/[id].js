@@ -13,8 +13,9 @@ export default function EditCar() {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
-  // Texte des URLs de photos (une par ligne)
-  const [photosText, setPhotosText] = useState('');
+  // Upload Imgur
+  const [uploadedPhotos, setUploadedPhotos] = useState([]); // URLs
+  const [uploading, setUploading] = useState(false);
   const router = useRouter();
   const { id } = router.query;
 
@@ -40,7 +41,7 @@ export default function EditCar() {
           const urls = Array.isArray(car.Photos)
             ? car.Photos.map((p) => p.url).filter(Boolean)
             : [];
-          setPhotosText(urls.join('\n'));
+          setUploadedPhotos(urls);
         }
       }
     } catch (error) {
@@ -56,12 +57,8 @@ export default function EditCar() {
     setError('');
 
     try {
-      // Construire la liste des pièces jointes pour Airtable
-      const photos = photosText
-        .split('\n')
-        .map((u) => u.trim())
-        .filter((u) => u)
-        .map((url) => ({ url }));
+      // Construire la liste des pièces jointes depuis URLs Imgur
+      const photos = uploadedPhotos.map((url) => ({ url }));
 
       const dataToSend = {
         id,
@@ -93,6 +90,30 @@ export default function EditCar() {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleFilesSelected = async (e) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      Array.from(files).forEach((file) => fd.append('file', file));
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(t || 'Upload échoué');
+      }
+      const data = await res.json();
+      const urls = Array.isArray(data.urls) ? data.urls : [];
+      setUploadedPhotos((prev) => [...prev, ...urls]);
+    } catch (err) {
+      setError(err.message || 'Erreur upload');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
   if (loadingData) {
@@ -203,40 +224,30 @@ export default function EditCar() {
                   />
                 </div>
 
-                {/* Photos (URLs) */}
+                {/* Photos (Upload vers Imgur) */}
                 <div>
-                  <label htmlFor="Photos" className="block text-sm font-medium text-gray-700 mb-2">
-                    Photos (URLs, une par ligne)
+                  <label htmlFor="PhotosUpload" className="block text-sm font-medium text-gray-700 mb-2">
+                    Photos (upload de fichiers)
                   </label>
-                  <textarea
-                    id="Photos"
-                    name="Photos"
-                    rows={4}
-                    value={photosText}
-                    onChange={(e) => setPhotosText(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    placeholder={"https://exemple.com/photo1.jpg\nhttps://exemple.com/photo2.jpg"}
+                  <input
+                    id="PhotosUpload"
+                    name="PhotosUpload"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFilesSelected}
+                    className="block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
                   />
-
-                  {/* Aperçu */}
-                  {photosText.trim() && (
+                  {uploading && (
+                    <p className="text-sm text-gray-500 mt-2">Upload en cours...</p>
+                  )}
+                  {uploadedPhotos.length > 0 && (
                     <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      {photosText
-                        .split('\n')
-                        .map((u) => u.trim())
-                        .filter((u) => u)
-                        .map((url, idx) => (
-                          <div key={idx} className="relative w-full h-28 border rounded overflow-hidden bg-gray-50">
-                            <img
-                              src={url}
-                              alt={`Photo ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.opacity = '0.3';
-                              }}
-                            />
-                          </div>
-                        ))}
+                      {uploadedPhotos.map((url, idx) => (
+                        <div key={idx} className="relative w-full h-28 border rounded overflow-hidden bg-gray-50">
+                          <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
