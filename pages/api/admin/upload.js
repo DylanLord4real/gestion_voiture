@@ -43,18 +43,21 @@ export default async function handler(req, res) {
           .replace(/^[-.]+|[-.]+$/g, '');
       };
 
-      const uploads = await Promise.all(
-        allFiles.map(async (file) => {
-          const buf = await fs.readFile(file.filepath);
-          const b64 = Buffer.from(buf).toString('base64');
-          const original = file.originalFilename || 'file';
-          const extMatch = original.match(/\.[a-zA-Z0-9]+$/);
-          const ext = extMatch ? extMatch[0] : '';
+      // Upload a single file to GitHub with retry on 409 conflict
+      const uploadWithRetry = async (file, maxRetries = 3) => {
+        const buf = await fs.readFile(file.filepath);
+        const b64 = Buffer.from(buf).toString('base64');
+        const original = file.originalFilename || 'file';
+        const extMatch = original.match(/\.[a-zA-Z0-9]+$/);
+        const ext = extMatch ? extMatch[0] : '';
+        const baseName = sanitize(original.replace(/\.[^.]+$/, '')) || 'image';
+
+        let attempt = 0;
+        while (attempt <= maxRetries) {
           const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-          const filename = `${unique}-${sanitize(original.replace(/\.[^.]+$/, ''))}${ext}`;
+          const filename = `${unique}-${baseName}${ext}`;
           const relPath = basePath ? `${basePath}/${filename}` : filename;
 
-          // Per GitHub API, the path segments should remain as URL path, not URL-encoded as a whole
           const apiUrl = `https://api.github.com/repos/${repo}/contents/${relPath}`;
           const body = {
             message: `Upload ${filename}`,
@@ -67,6 +70,7 @@ export default async function handler(req, res) {
               email: process.env.GH_COMMITTER_EMAIL,
             };
           }
+
           const resp = await fetch(apiUrl, {
             method: 'PUT',
             headers: {
@@ -77,14 +81,28 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify(body),
           });
-          if (!resp.ok) {
-            const t = await resp.text();
-            throw new Error(`GitHub upload failed: ${resp.status} ${t}`);
+
+          if (resp.ok) {
+            // Return jsDelivr CDN URL
+            const cdnUrl = `https://cdn.jsdelivr.net/gh/${repo}@${branch}/${relPath}`;
+            return cdnUrl;
           }
-          // Return jsDelivr CDN URL
-          const cdnUrl = `https://cdn.jsdelivr.net/gh/${repo}@${branch}/${relPath}`;
-          return cdnUrl;
-        })
+
+          // Handle 409 conflict: regenerate a new filename and retry
+          if (resp.status === 409 && attempt < maxRetries) {
+            attempt += 1;
+            continue;
+          }
+
+          const t = await resp.text();
+          throw new Error(`GitHub upload failed: ${resp.status} ${t}`);
+        }
+
+        throw new Error('GitHub upload failed after retries');
+      };
+
+      const uploads = await Promise.all(
+        allFiles.map((file) => uploadWithRetry(file))
       );
 
       const urls = uploads.filter(Boolean);
