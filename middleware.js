@@ -9,17 +9,16 @@ export function middleware(request) {
     return NextResponse.next();
   }
   
-  // Rediriger les requêtes admin vers le sous-domaine admin (production uniquement)
+  // Rediriger les requêtes admin vers le domaine admin dédié (production uniquement)
   if (pathname.startsWith('/admin')) {
     const adminUrl = new URL(request.url);
-    adminUrl.hostname = `admin.${adminUrl.hostname}`;
+    adminUrl.hostname = 'admin-rahicoauto.vercel.app';
     adminUrl.pathname = pathname.replace('/admin', '');
-    
     return NextResponse.redirect(adminUrl);
   }
   
   // Gérer les requêtes du sous-domaine admin
-  if (request.nextUrl.hostname.startsWith('admin.')) {
+  if (hostname === 'admin-rahicoauto.vercel.app') {
     // Vérifier l'authentification pour les pages admin
     const authCookie = request.cookies.get('admin-auth');
     
@@ -31,7 +30,6 @@ export function middleware(request) {
     // Réécrire l'URL pour servir les pages admin
     const url = request.nextUrl.clone();
     url.pathname = `/admin${pathname}`;
-    url.hostname = request.nextUrl.hostname.replace('admin.', '');
     
     return NextResponse.rewrite(url);
   }
