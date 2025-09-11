@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://rahico-parc-auto.vercel.app/sitemap.xml
+Sitemap: https://rahico-auto.com/sitemap.xml
 
 # Disallow admin or private areas (if any)
 Disallow: /api/

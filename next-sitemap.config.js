@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://rahico-parc-auto.vercel.app',
+  siteUrl: process.env.SITE_URL || 'https://rahico-auto.com',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [
@@ -11,7 +11,7 @@ module.exports = {
       }
     ],
     additionalSitemaps: [
-      'https://rahico-parc-auto.vercel.app/api/sitemap.xml'
+      'https://rahico-auto.com/api/sitemap.xml'
     ]
   },
   exclude: ['/api/*', '/_next/*', '/admin/*'],

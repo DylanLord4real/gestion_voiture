@@ -4,9 +4,10 @@ export function BusinessStructuredData() {
   const businessData = {
     "@context": "https://schema.org",
     "@type": "AutoDealer",
-    "name": "RAHICO PARC AUTO",
-    "description": "Concessionnaire automobile spécialisé dans la vente de véhicules d'occasion de qualité à Abidjan, Côte d'Ivoire",
-    "url": "https://rahico-parc-auto.vercel.app",
+    "name": "RAHICO AUTO",
+    "alternateName": ["Rahico Auto", "RAHICO PARC AUTO"],
+    "description": "Rahico Auto - Concessionnaire automobile spécialisé dans la vente de véhicules d'occasion de qualité à Abidjan, Côte d'Ivoire",
+    "url": "https://rahico-auto.com",
     "telephone": "+225 07 89 13 38 97",
     "address": {
       "@type": "PostalAddress",
@@ -67,12 +68,12 @@ export function CarStructuredData({ car }) {
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "AutoDealer",
-        "name": "RAHICO PARC AUTO",
+        "name": "RAHICO AUTO",
         "telephone": "+225 07 89 13 38 97"
       }
     },
     "image": car.Images && car.Images.length > 0 ? car.Images.map(img => img.url) : ["/images/icon.png"],
-    "url": `https://rahico-parc-auto.vercel.app/voiture/${car.id}`
+    "url": `https://rahico-auto.com/voiture/${car.id}`
   };
 
   return (

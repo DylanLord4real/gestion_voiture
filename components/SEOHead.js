@@ -1,14 +1,14 @@
 import Head from 'next/head';
 
 export default function SEOHead({ 
-  title = "RAHICO PARC AUTO - Vente de Véhicules d'Occasion en Côte d'Ivoire",
-  description = "RAHICO PARC AUTO, votre concessionnaire de confiance à Abidjan. Découvrez notre large sélection de véhicules d'occasion de qualité : berlines, SUV, 4x4. Financement disponible, garantie incluse.",
-  keywords = "voiture occasion Abidjan, véhicule d'occasion Côte d'Ivoire, RAHICO PARC AUTO, concessionnaire automobile Abidjan, berline occasion, SUV occasion, 4x4 occasion, financement auto, garantie véhicule",
+  title = "RAHICO AUTO - Vente de Véhicules d'Occasion en Côte d'Ivoire | Rahico Auto",
+  description = "RAHICO AUTO, votre concessionnaire de confiance à Abidjan. Découvrez notre large sélection de véhicules d'occasion de qualité : berlines, SUV, 4x4. Rahico Auto - Cocody 2 Plateaux Vallon.",
+  keywords = "rahico auto, RAHICO AUTO, rahico parc auto, voiture occasion Abidjan, véhicule d'occasion Côte d'Ivoire, concessionnaire automobile Abidjan, berline occasion, SUV occasion, 4x4 occasion, financement auto, garantie véhicule, cocody 2 plateaux",
   image = "/images/icon.png",
   url = "",
   type = "website"
 }) {
-  const siteUrl = "https://rahico-parc-auto.vercel.app";
+  const siteUrl = "https://rahico-auto.com";
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
   const fullImageUrl = `${siteUrl}${image}`;
 
@@ -60,11 +60,21 @@ export default function SEOHead({
       <meta httpEquiv="content-language" content="fr-CI" />
       
       {/* Informations business */}
-      <meta name="author" content="RAHICO PARC AUTO" />
+      <meta name="author" content="RAHICO AUTO" />
       <meta name="contact" content="+225 07 89 13 38 97" />
-      <meta name="coverage" content="Worldwide" />
-      <meta name="distribution" content="Global" />
+      <meta name="coverage" content="Côte d'Ivoire" />
+      <meta name="distribution" content="Local" />
       <meta name="rating" content="General" />
+      
+      {/* Mots-clés spécifiques pour "rahico auto" */}
+      <meta name="subject" content="Rahico Auto - Vente véhicules occasion Abidjan" />
+      <meta name="classification" content="Automobile, Concessionnaire, Véhicules d'occasion" />
+      <meta name="owner" content="RAHICO AUTO" />
+      <meta name="reply-to" content="+225 07 89 13 38 97" />
+      <meta name="url" content="https://rahico-auto.com" />
+      <meta name="identifier-URL" content="https://rahico-auto.com" />
+      <meta name="category" content="Automobile" />
+      <meta name="summary" content="Rahico Auto - Concessionnaire automobile spécialisé dans la vente de véhicules d'occasion à Abidjan, Côte d'Ivoire" />
     </Head>
   );
 }

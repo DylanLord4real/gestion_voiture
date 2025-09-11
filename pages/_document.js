@@ -5,9 +5,10 @@ export default function Document() {
     <Html lang="fr-CI">
       <Head>
         {/* Google Analytics */}
+        {/* Google Analytics - Remplacez GA_MEASUREMENT_ID par votre ID réel */}
         <script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'GA_MEASUREMENT_ID'}`}
         />
         <script
           dangerouslySetInnerHTML={{
@@ -15,10 +16,13 @@ export default function Document() {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'GA_MEASUREMENT_ID');
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'GA_MEASUREMENT_ID'}');
             `,
           }}
         />
+        
+        {/* Google Search Console Verification */}
+        <meta name="google-site-verification" content={process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "YOUR_VERIFICATION_CODE"} />
         
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

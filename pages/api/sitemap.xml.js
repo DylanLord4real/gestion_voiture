@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   try {
     const cars = await getCars();
-    const baseUrl = 'https://rahico-parc-auto.vercel.app';
+    const baseUrl = 'https://rahico-auto.com';
     
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

@@ -80,17 +80,17 @@ export default function Home({ cars }) {
             {/* Left Content */}
             <div className="text-white">
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Véhicules
+                <span className="block text-white">RAHICO AUTO</span>
                 <span className="block text-orange-200">
-                  d'Occasion
+                  Véhicules d'Occasion
                 </span>
                 <span className="block text-3xl md:text-4xl font-normal text-orange-100">
                   de Qualité
                 </span>
               </h1>
               <p className="text-xl text-orange-100 mb-8 leading-relaxed">
-                Découvrez notre sélection de véhicules d'occasion soigneusement inspectés 
-                à Cocody 2 Plateaux Vallon.
+                Rahico Auto - Découvrez notre sélection de véhicules d'occasion soigneusement inspectés 
+                à Cocody 2 Plateaux Vallon, Abidjan.
               </p>
               
               {/* Contact Info */}
@@ -123,7 +123,7 @@ export default function Home({ cars }) {
       <section id="vehicules" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Nos Véhicules d'Occasion</h2>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Rahico Auto - Nos Véhicules d'Occasion</h2>
             <div className="w-24 h-1 bg-gradient-to-r from-red-600 to-orange-600 mx-auto mb-4"></div>
             <p className="text-gray-600 text-lg">{filteredCars.length} véhicule{filteredCars.length > 1 ? 's' : ''} disponible{filteredCars.length > 1 ? 's' : ''}</p>
           </div>
@@ -287,7 +287,7 @@ export default function Home({ cars }) {
                 </div>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Votre partenaire de confiance pour l'achat de véhicules d'occasion de qualité à Abidjan.
+                Rahico Auto - Votre partenaire de confiance pour l'achat de véhicules d'occasion de qualité à Abidjan.
               </p>
             </div>
             

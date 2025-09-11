@@ -1,0 +1,25 @@
+{
+  "name": "RAHICO AUTO - Véhicules d'Occasion",
+  "short_name": "Rahico Auto",
+  "description": "Rahico Auto - Concessionnaire automobile spécialisé dans la vente de véhicules d'occasion de qualité à Abidjan, Côte d'Ivoire",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "/images/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["business", "automotive"],
+  "lang": "fr-CI",
+  "scope": "/",
+  "orientation": "portrait-primary"
+}
